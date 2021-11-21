@@ -1,0 +1,64 @@
+---
+title: "CandyProduction"
+author: "Marion"
+date: "21/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##LOAD PACKAGES
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(plotly)
+```
+##LOAD DATA
+```{r}
+candy <- read.csv("C:\\Marion\\candy_production.csv")
+# Take a look at the class of the dataset US_candy_production
+str(candy)
+View(candy)
+# Assign more meaningful variable names
+colnames(candy)<-c("Period","candy_production")
+
+# Convert data into time series dataset
+attach(candy)
+candyts<-ts(candy_production,c(1972,1),c(2017,8),12)
+str(candyts)
+```
+The candy production dataset provides monthly totals of US candy production, from 1972 to August 2017 as a percent of 2012 production. We have now successfully converted this dataset to a time series class therefore no further class or date manipulation is required.
+
+#EDA
+
+To perform exploratory data analysis, let's first review the data with summary statistics and plots in R.
+
+```{r}
+# Check for missing values
+sum(is.na(candyts))
+
+# Check the frequency of the time series data
+frequency(candyts)
+
+# Check the cycle of the time series
+cycle(candyts)
+
+# Review the summary statistics
+summary(candyts)
+
+# Plot the raw data using the base plot function
+plot(candyts,xlab="Year", ylab = "Candy Production as (%) of 2012 Production",main="Monthly US Candy Production from 1972 to 2017")
+
+```
+```{r}
+boxplot(candyts~cycle(candyts),xlab="Month", ylab = "Candy Production as (%) of 2012 Production" ,main ="Monthly US Candy Production from 1972 to 2017")
+
+```
+
+The candy production numbers increase over time with each year from 1972 to early 2000's which may be indicative of an increasing linear trend, perhaps due to increasing demand for candies during that time period. However, production seems to slow down during mid to late 2000's, while the trend during the present decade seems to be pretty stagnant.
+Boxplot reveals that candy production is higher in months 10 to 12, having higher means and lower variances than the other months, indicating seasonality with an apparent cycle of 12 months.
+Candy production dataset appears to be a multiplicative time series as the production numbers increase, it appears so does the pattern of seasonality.
+There do not appear to be significant amount of outliers and there are no missing values. Therefore no further data cleaning is required.
+
